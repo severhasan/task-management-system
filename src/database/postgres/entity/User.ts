@@ -5,6 +5,7 @@ import {
   Entity,
   OneToMany,
   PrimaryGeneratedColumn,
+  Unique,
   UpdateDateColumn,
 } from 'typeorm';
 import { Task } from './Task';
@@ -15,14 +16,14 @@ export class User {
   id: number;
 
   @Column({ nullable: true })
-  firstName: string;
+  firstname: string;
 
   @Column({ nullable: true })
-  lastName: string;
+  lastname: string;
 
   @Index()
-  @Column()
-  email: number;
+  @Column({ unique: true })
+  email: string;
 
   @Column()
   password: string;

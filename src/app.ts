@@ -4,9 +4,11 @@ dotenv.config();
 import express from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
-import router from './api/routes';
+import { authRouter, tasksRouter } from './api/routes';
 import { PrimaryDataSource } from './database/postgres/postgres.data-source';
 import { MongoDataSource } from './database/mongo/mongo.data-source';
+import { responseInterceptor } from './api/middleware/middleware.interceptor';
+import { authenticate } from './api/middleware/middleware.auth';
 
 const PORT = process.env.PORT || 3000;
 
@@ -16,7 +18,10 @@ const startApp = async () => {
   app.use(helmet());
   app.use(express.json());
   app.use(cors());
-  app.use(router);
+  app.use(responseInterceptor);
+  app.use('/tasks', authenticate);
+  app.use(authRouter);
+  app.use(tasksRouter);
 
   try {
     await PrimaryDataSource.initialize();
