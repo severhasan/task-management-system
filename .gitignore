@@ -41,3 +41,6 @@ yarn.lock
 
 # Env
 .env
+
+# Database
+migration/
