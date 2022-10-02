@@ -16,3 +16,6 @@ export const PrimaryDataSource = new DataSource({
   migrations: [],
   subscribers: [],
 });
+
+export const userRepository = PrimaryDataSource.getRepository(User);
+export const taskRepository = PrimaryDataSource.getRepository(Task);

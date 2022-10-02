@@ -9,3 +9,5 @@ export const MongoDataSource = new DataSource({
   database: process.env.MONGO_DATABASE,
   entities: [TaskHistory],
 });
+
+export const taskHistoryRepository = MongoDataSource.getRepository(TaskHistory);

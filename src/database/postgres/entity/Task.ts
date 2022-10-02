@@ -3,6 +3,7 @@ import {
   PrimaryGeneratedColumn,
   Column,
   CreateDateColumn,
+  Index,
   ManyToOne,
   UpdateDateColumn,
 } from 'typeorm';
@@ -22,6 +23,7 @@ export class Task {
   @Column({ default: '' })
   title: string;
 
+  @Index()
   @Column({
     type: 'enum',
     enum: TaskStatus,
@@ -29,11 +31,14 @@ export class Task {
   })
   status: TaskStatus;
 
-  @ManyToOne(() => User, (user) => user.tasks, { nullable: false })
+  @ManyToOne(() => User, (user) => user.tasks, { nullable: false, eager: true })
   createdBy: User;
 
-  @ManyToOne(() => User, (user) => user.assignedTasks, { nullable: true })
-  assignedTo: User | null;
+  @ManyToOne(() => User, (user) => user.assignedTasks, {
+    nullable: true,
+    eager: true,
+  })
+  assignedUser: User | null;
 
   @CreateDateColumn()
   createdAt: Date;

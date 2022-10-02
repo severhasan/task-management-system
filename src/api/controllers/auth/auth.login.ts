@@ -1,7 +1,6 @@
 import bcrypt from 'bcrypt';
 import { Request, Response } from 'express';
-import { PrimaryDataSource } from '../../../database/postgres/postgres.data-source';
-import { User } from '../../../database/postgres/entity/User';
+import { userRepository } from '../../../database/postgres/postgres.data-source';
 import jwt from 'jsonwebtoken';
 
 export interface CustomJWTPayload {
@@ -14,8 +13,6 @@ export interface LoginRequestBody {
   password: string;
   username: string;
 }
-
-const userRepository = PrimaryDataSource.getRepository(User);
 
 export async function login(req: Request, res: Response) {
   const body = <LoginRequestBody>req.body;

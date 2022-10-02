@@ -15,10 +15,11 @@ router.post(
 
 router.post(
   '/register',
+  body('fullname').isLength({ min: 1 }).withMessage('fullname cannot be empty'),
   body('username').isEmail().withMessage('username must be a valid email'),
   body('password')
     .isLength({ min: 6 })
-    .withMessage('password length must be longer than 6'),
+    .withMessage('password must be longer than 6 characters'),
   requestValidator,
   register
 );

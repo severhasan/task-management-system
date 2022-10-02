@@ -5,8 +5,7 @@ import { User } from '../../../database/postgres/entity/User';
 import { LoginRequestBody } from './auth.login';
 
 interface RegisterRequestBody extends LoginRequestBody {
-  firstname?: string;
-  lastname?: string;
+  fullname: string;
 }
 
 const userRepository = PrimaryDataSource.getRepository(User);
@@ -30,8 +29,7 @@ export async function register(req: Request, res: Response) {
   }
 
   const user = new User();
-  user.firstname = body.firstname || '';
-  user.lastname = body.lastname || '';
+  user.fullname = body.fullname || '';
   user.email = body.username;
   user.password = password;
 
