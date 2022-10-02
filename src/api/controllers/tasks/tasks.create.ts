@@ -1,10 +1,14 @@
 import { Request, Response } from 'express';
 import { Task } from '../../../database/postgres/entity/Task';
+import { TaskStatus } from '../../../database/mongo/entity/TaskHistory';
 import {
   taskRepository,
   userRepository,
 } from '../../../database/postgres/postgres.data-source';
-import { TaskStatus } from '../../../database/mongo/entity/TaskHistory';
+import {
+  deleteKeysByPrefix,
+  REDIS_ALL_TASKS_PREFIX,
+} from '../../../database/redis/redis.client';
 
 interface TaskRequestBody {
   title: string;
@@ -38,6 +42,9 @@ export async function createTask(req: Request, res: Response) {
       assignedUser: assignedUser || null,
       status: body.status || TaskStatus.NEW,
     })) as Task;
+
+    deleteKeysByPrefix(REDIS_ALL_TASKS_PREFIX);
+
     res.status(201).json({
       message: 'Created',
       task: {

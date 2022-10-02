@@ -1,5 +1,11 @@
 import { Request, Response } from 'express';
 import { taskRepository } from '../../../database/postgres/postgres.data-source';
+import {
+  deleteKeysByPrefix,
+  redisClient,
+  REDIS_ALL_TASKS_PREFIX,
+  REDIS_TASK_BY_ID_PREFIX,
+} from '../../../database/redis/redis.client';
 
 export async function deleteTask(req: Request, res: Response) {
   const id = +req.params.id;
@@ -18,6 +24,9 @@ export async function deleteTask(req: Request, res: Response) {
 
     const deleted = await taskRepository.delete({ id: id });
     if (deleted.affected === 1) {
+      deleteKeysByPrefix(REDIS_ALL_TASKS_PREFIX);
+      redisClient.unlink(REDIS_TASK_BY_ID_PREFIX + task.id);
+
       return res.json({
         message: 'Deleted task successfully.',
       });

@@ -7,6 +7,12 @@ import {
 } from '../../../database/postgres/postgres.data-source';
 import { User } from '../../../database/postgres/entity/User';
 import { taskHistoryRepository } from '../../../database/mongo/mongo.data-source';
+import {
+  deleteKeysByPrefix,
+  redisClient,
+  REDIS_ALL_TASKS_PREFIX,
+  REDIS_TASK_BY_ID_PREFIX,
+} from '../../../database/redis/redis.client';
 
 interface UpdateRequestBody {
   status?: TaskStatus;
@@ -63,6 +69,9 @@ export async function updateTaskById(req: Request, res: Response) {
           status: body.status || task.status,
         }
       );
+
+      deleteKeysByPrefix(REDIS_ALL_TASKS_PREFIX);
+      redisClient.unlink(REDIS_TASK_BY_ID_PREFIX + task.id);
     }
 
     if (body.assignedUser) {
@@ -84,17 +93,24 @@ export async function updateTaskById(req: Request, res: Response) {
       });
     }
 
+    let reassignedUser = null;
+    if (userToAssign) {
+      reassignedUser = {
+        id: userToAssign.id,
+        fullname: userToAssign.fullname,
+      };
+    } else if (task.assignedUser) {
+      reassignedUser = {
+        id: task.assignedUser.id,
+        fullname: task.assignedUser.fullname,
+      };
+    }
     res.status(200).json({
       message: 'Update successful',
       task: {
         id: task.id,
         title: body.title || task.title,
-        assignedUser: {
-          id: userToAssign ? userToAssign.id : task.assignedUser.id,
-          fullname: userToAssign
-            ? userToAssign.fullname
-            : task.assignedUser.fullname,
-        },
+        assignedUser: reassignedUser,
         status: body.status || task.status,
       },
     });
