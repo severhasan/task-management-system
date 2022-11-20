@@ -5,11 +5,11 @@ import { User } from './entity/User';
 
 export const PrimaryDataSource = new DataSource({
   type: 'postgres',
-  host: process.env.PG_HOST,
-  port: +process.env.PG_PORT,
-  username: process.env.PG_USERNAME,
-  password: process.env.PG_PASSWORD,
-  database: process.env.PG_DATABASE,
+  host: process.env.POSTGRES_HOST,
+  port: +process.env.POSTGRES_PORT,
+  username: process.env.POSTGRES_USER,
+  password: process.env.POSTGRES_PASSWORD,
+  database: process.env.POSTGRES_DB,
   synchronize: true,
   logging: false,
   entities: [User, Task],
